@@ -1,6 +1,7 @@
 import Sidebar from "@/components/dom/Sidebar/Sidebar";
 import DebugInput from "@/features/input/DebugInput";
 import MusicSwitcher from "@/features/Music/MusicSwitcher";
+import OscillatorMusic from "@/features/Music/OscillatorMusic";
 import useStore from "@/helpers/store";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -28,6 +29,7 @@ const DOM = () => {
   return (
     <>
       <P5WaveformLineShapeViz />
+      <OscillatorMusic direction="left" />
       <Sidebar />
       <DebugInput />
       <MusicSwitcher />

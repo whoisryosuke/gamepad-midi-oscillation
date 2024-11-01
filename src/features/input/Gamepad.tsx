@@ -29,6 +29,7 @@ export function useGamepads() {
     currentDevice,
     setCurrentDevice,
     setDeviceName,
+    setAxes,
   } = useInputStore();
   const gamepads = useRef<GamepadRef>([]);
   const requestRef = useRef<number>();
@@ -41,6 +42,8 @@ export function useGamepads() {
       ...gamepads.current,
       [gamepad.index]: gamepad,
     };
+
+    setAxes([...gamepad.axes]);
 
     // Convert Gamepad input to generic input
     const gamepadMapArray = Object.keys(DEFAULT_GAMEPAD_MAP);

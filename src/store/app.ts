@@ -43,6 +43,10 @@ interface AppState {
   setSynthType: (synthType: SynthTypes) => void;
   waveform: React.RefObject<Tone.Waveform> | null;
   setWaveform: (fft: React.RefObject<Tone.Waveform>) => void;
+  waveformOscLeft: React.RefObject<Tone.Waveform> | null;
+  setWaveformOscLeft: (fft: React.RefObject<Tone.Waveform>) => void;
+  waveformOscRight: React.RefObject<Tone.Waveform> | null;
+  setWaveformOscRight: (fft: React.RefObject<Tone.Waveform>) => void;
   fft: React.RefObject<Tone.FFT> | null;
   setFft: (fft: React.RefObject<Tone.FFT>) => void;
 }
@@ -85,6 +89,11 @@ export const useAppStore = create<AppState>()(
     setSynthType: (synthType) => set(() => ({ synthType })),
     waveform: null,
     setWaveform: (waveform) => set(() => ({ waveform })),
+    waveformOscLeft: null,
+    setWaveformOscLeft: (waveformOscLeft) => set(() => ({ waveformOscLeft })),
+    waveformOscRight: null,
+    setWaveformOscRight: (waveformOscRight) =>
+      set(() => ({ waveformOscRight })),
     fft: null,
     setFft: (fft) => set(() => ({ fft })),
   }))

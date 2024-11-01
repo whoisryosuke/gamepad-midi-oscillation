@@ -3,6 +3,7 @@ import p5 from "p5";
 import { useAppStore } from "../../store/app";
 import { BASE_COLORS } from "themes/colors/base";
 import createGridLines from "./shared/createGridLines";
+import mapRange from "@/helpers/mapRange";
 
 type Props = {
   width: CSSProperties["width"];
@@ -15,6 +16,7 @@ const P5WaveformLineShapeViz = ({ width, height, ...props }: Props) => {
 
   const Sketch = (p) => {
     let y = 100;
+    let prevWave = 0;
     p.setup = () => {
       console.log("setup canvas");
       p.createCanvas(width ?? window.innerWidth, height ?? window.innerHeight);
@@ -25,7 +27,7 @@ const P5WaveformLineShapeViz = ({ width, height, ...props }: Props) => {
       // console.log('drawing!!')
       p.background(p.color(BASE_COLORS["gray-9"])); // Set the background to black
 
-      const { waveform, colorMode } = useAppStore.getState();
+      const { waveformOscLeft: waveform, colorMode } = useAppStore.getState();
       if (!waveform?.current) return;
 
       const levels = waveform.current.getValue();
@@ -50,18 +52,37 @@ const P5WaveformLineShapeViz = ({ width, height, ...props }: Props) => {
       p.beginShape();
       p.strokeWeight(2);
       p.stroke(BASE_COLORS[`${colorMode}-4`]);
-      const width = Math.max(levels.length, p.width);
-      console.log("widht", p.width, width);
+      const width = Math.max(levels.length, p.width) / 2;
+
       for (let i = 0; i < width; i++) {
+        if (levels[i - 1] < 0 && levels[i] >= 0) {
+          prevWave = i;
+          break;
+        }
+      }
+
+      const end = width + prevWave;
+      for (let i = prevWave; i < end; i++) {
         const normalized = levels[i] * 100;
-        if (i == 0) console.log(normalized);
+        console.log(normalized);
         // p.vertex(i * 12, binMapped - 500);
         const halfwayDownScreen = p.height / 2;
-        const amplitude = 10; // wave height
+        const amplitude = 1; // wave height
         const speed = 5; // more is slower
         const amplified = normalized * amplitude;
         const sin = p.sin(i / speed + p.millis() / 1000) * amplitude;
-        p.vertex(i * 3, halfwayDownScreen - amplified);
+
+        const x = mapRange(i, prevWave, end, 0, p.width);
+        const y = mapRange(
+          normalized,
+          -100,
+          100,
+          p.height / 4,
+          (p.height / 4) * 3
+        );
+
+        // p.vertex(i, halfwayDownScreen - amplified);
+        p.vertex(x, y);
       }
       // Since the stroke is 2px, we add a gap of that minimally so stroke doesn't show on bottom
       const GAP = 5;
@@ -77,11 +98,7 @@ const P5WaveformLineShapeViz = ({ width, height, ...props }: Props) => {
       p5ref.current = new p5(Sketch, divRef.current);
   }, []);
 
-  return (
-    <Suspense>
-      <div ref={divRef}></div>
-    </Suspense>
-  );
+  return <div ref={divRef}></div>;
 };
 
 export default P5WaveformLineShapeViz;
