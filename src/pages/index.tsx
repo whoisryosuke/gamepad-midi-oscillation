@@ -30,6 +30,7 @@ const DOM = () => {
     <>
       <P5WaveformLineShapeViz />
       <OscillatorMusic direction="left" />
+      <OscillatorMusic direction="right" />
       <Sidebar />
       <DebugInput />
       <MusicSwitcher />

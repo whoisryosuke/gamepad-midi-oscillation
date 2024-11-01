@@ -5,6 +5,39 @@ import { BASE_COLORS } from "themes/colors/base";
 import createGridLines from "./shared/createGridLines";
 import mapRange from "@/helpers/mapRange";
 
+function drawOscillatorLine(p: p5, levels, colorMode, prevWave) {
+  p.strokeWeight(2);
+  p.stroke(BASE_COLORS[`${colorMode}-4`]);
+  const width = Math.max(levels.length, p.width) / 4;
+
+  for (let i = 0; i < width; i++) {
+    if (levels[i - 1] < 0 && levels[i] >= 0) {
+      prevWave = i;
+      break;
+    }
+  }
+
+  const end = width + prevWave;
+  for (let i = prevWave; i < end; i++) {
+    const normalized = levels[i];
+    const prevNormalized = levels[i - 1];
+
+    const prevX = mapRange(i - 1, prevWave, end, 0, p.width);
+    const prevY = mapRange(
+      prevNormalized,
+      -1,
+      1,
+      p.height / 4,
+      (p.height / 4) * 3
+    );
+
+    const x = mapRange(i, prevWave, end, 0, p.width);
+    const y = mapRange(normalized, -1, 1, p.height / 4, (p.height / 4) * 3);
+
+    p.line(prevX, prevY, x, y);
+  }
+}
+
 type Props = {
   width: CSSProperties["width"];
   height: CSSProperties["height"];
@@ -16,7 +49,8 @@ const P5WaveformLineShapeViz = ({ width, height, ...props }: Props) => {
 
   const Sketch = (p) => {
     let y = 100;
-    let prevWave = 0;
+    let prevWaveLeft = 0;
+    let prevWaveRight = 0;
     p.setup = () => {
       console.log("setup canvas");
       p.createCanvas(width ?? window.innerWidth, height ?? window.innerHeight);
@@ -27,68 +61,19 @@ const P5WaveformLineShapeViz = ({ width, height, ...props }: Props) => {
       // console.log('drawing!!')
       p.background(p.color(BASE_COLORS["gray-9"])); // Set the background to black
 
-      const { waveformOscLeft: waveform, colorMode } = useAppStore.getState();
-      if (!waveform?.current) return;
+      const { waveformOscLeft, waveformOscRight, colorMode } =
+        useAppStore.getState();
+      if (!waveformOscLeft?.current || !waveformOscRight?.current) return;
 
-      const levels = waveform.current.getValue();
+      const levelsLeft = waveformOscLeft.current.getValue();
+      const levelsRight = waveformOscRight.current.getValue();
 
       // BG Lines
       createGridLines(p, 15);
 
-      // Setup the gradient using the Canvas ref
-      const gradient = p.drawingContext.createLinearGradient(
-        p.width / 2,
-        0,
-        p.width / 2,
-        p.height
-      );
-      gradient.addColorStop(0, p.color(BASE_COLORS[`${colorMode}-4`]));
-      gradient.addColorStop(1, p.color(BASE_COLORS["gray-9"]));
-
-      // Apply gradient to the canvas fill
-      p.drawingContext.fillStyle = gradient;
-
-      // Line mesh thing
-      p.beginShape();
-      p.strokeWeight(2);
-      p.stroke(BASE_COLORS[`${colorMode}-4`]);
-      const width = Math.max(levels.length, p.width) / 2;
-
-      for (let i = 0; i < width; i++) {
-        if (levels[i - 1] < 0 && levels[i] >= 0) {
-          prevWave = i;
-          break;
-        }
-      }
-
-      const end = width + prevWave;
-      for (let i = prevWave; i < end; i++) {
-        const normalized = levels[i] * 100;
-        console.log(normalized);
-        // p.vertex(i * 12, binMapped - 500);
-        const halfwayDownScreen = p.height / 2;
-        const amplitude = 1; // wave height
-        const speed = 5; // more is slower
-        const amplified = normalized * amplitude;
-        const sin = p.sin(i / speed + p.millis() / 1000) * amplitude;
-
-        const x = mapRange(i, prevWave, end, 0, p.width);
-        const y = mapRange(
-          normalized,
-          -100,
-          100,
-          p.height / 4,
-          (p.height / 4) * 3
-        );
-
-        // p.vertex(i, halfwayDownScreen - amplified);
-        p.vertex(x, y);
-      }
-      // Since the stroke is 2px, we add a gap of that minimally so stroke doesn't show on bottom
-      const GAP = 5;
-      p.vertex(p.width, p.height + GAP);
-      p.vertex(0, p.height + GAP);
-      p.endShape();
+      // Oscillators
+      drawOscillatorLine(p, levelsLeft, "cyan", prevWaveLeft);
+      drawOscillatorLine(p, levelsRight, "orange", prevWaveRight);
     };
   };
 
