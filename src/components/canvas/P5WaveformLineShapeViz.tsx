@@ -4,6 +4,7 @@ import { useAppStore } from "../../store/app";
 import { BASE_COLORS } from "themes/colors/base";
 import createGridLines from "./shared/createGridLines";
 import mapRange from "@/helpers/mapRange";
+import { useInputStore } from "@/store/input";
 
 function drawOscillatorLine(p: p5, levels, colorMode, prevWave) {
   p.strokeWeight(2);
@@ -38,6 +39,14 @@ function drawOscillatorLine(p: p5, levels, colorMode, prevWave) {
   }
 }
 
+function drawAnalogStick(p: p5, axe, direction) {
+  const directionOffset = direction == "left" ? -100 : 100;
+  const ogX = p.width / 2;
+  const offset = mapRange(axe, -1, 1, 0, 50);
+  const newX = ogX + offset + directionOffset;
+  p.circle(newX, p.height - p.height / 10, 100);
+}
+
 type Props = {
   width: CSSProperties["width"];
   height: CSSProperties["height"];
@@ -47,7 +56,7 @@ const P5WaveformLineShapeViz = ({ width, height, ...props }: Props) => {
   const p5ref = useRef<p5 | null>(null);
   const divRef = useRef<HTMLDivElement | null>(null);
 
-  const Sketch = (p) => {
+  const Sketch = (p: p5) => {
     let y = 100;
     let prevWaveLeft = 0;
     let prevWaveRight = 0;
@@ -61,6 +70,7 @@ const P5WaveformLineShapeViz = ({ width, height, ...props }: Props) => {
       // console.log('drawing!!')
       p.background(p.color(BASE_COLORS["gray-9"])); // Set the background to black
 
+      const { axes } = useInputStore.getState();
       const { waveformOscLeft, waveformOscRight, colorMode } =
         useAppStore.getState();
       if (!waveformOscLeft?.current || !waveformOscRight?.current) return;
@@ -74,6 +84,13 @@ const P5WaveformLineShapeViz = ({ width, height, ...props }: Props) => {
       // Oscillators
       drawOscillatorLine(p, levelsLeft, "cyan", prevWaveLeft);
       drawOscillatorLine(p, levelsRight, "orange", prevWaveRight);
+
+      // Draw Analog Sticks
+      p.strokeWeight(2);
+      p.stroke(BASE_COLORS[`${colorMode}-4`]);
+      p.fill(0, 0, 0, 0);
+      drawAnalogStick(p, axes[0], "left");
+      drawAnalogStick(p, axes[2], "right");
     };
   };
 
