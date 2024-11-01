@@ -2,8 +2,7 @@
   "name": "r3f-next-starter",
   "version": "1.0.0",
   "authors": [
-    "Ryosuke Hana <https://twitter.com/whoisryosuke>",
-    "Renaud ROHLINGER <https://twitter.com/onirenaud>"
+    "Ryosuke Hana <https://twitter.com/whoisryosuke>"
   ],
   "license": "MIT",
   "private": true,
@@ -30,6 +29,7 @@
     "leva": "^0.9.27",
     "maath": "^0.10.8",
     "next": "^12.1.6",
+    "p5": "^1.11.1",
     "postprocessing": "^6.36.3",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
@@ -43,6 +43,7 @@
   "devDependencies": {
     "@next/bundle-analyzer": "^12.0.10",
     "@types/node": "^17.0.39",
+    "@types/p5": "^1.7.6",
     "@types/react": "^18.0.10",
     "@types/three": "^0.169.0",
     "eslint": "^8.17.0",

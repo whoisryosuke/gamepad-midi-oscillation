@@ -16,8 +16,8 @@ const Shader = dynamic(
     ssr: false,
   }
 );
-const PianoScene = dynamic(
-  () => import("@/components/canvas/PianoScene/PianoScene"),
+const P5WaveformLineShapeViz = dynamic(
+  () => import("@/components/canvas/P5WaveformLineShapeViz"),
   {
     ssr: false,
   }
@@ -27,6 +27,7 @@ const PianoScene = dynamic(
 const DOM = () => {
   return (
     <>
+      <P5WaveformLineShapeViz />
       <Sidebar />
       <DebugInput />
       <MusicSwitcher />
@@ -43,11 +44,7 @@ const R3F = () => {
     router.push("/two");
   };
 
-  return (
-    <>
-      <PianoScene />
-    </>
-  );
+  return <></>;
 };
 
 export default function Page() {
