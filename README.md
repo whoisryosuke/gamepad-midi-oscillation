@@ -1,3 +1,5 @@
+![Screenshot of app](./docs/screenshot.png)
+
 # Gamepad MIDI Oscillation
 
 Uses analog stick input from a gamepad to control the frequency of 2 MIDI oscillators. Built with ReactJS, ToneJS, and P5JS.
