@@ -1,15 +1,13 @@
-# Ryoturia
+# Gamepad MIDI Oscillation
 
-A 3D MIDI Synthesizer Piano (for the web).
+Uses analog stick input from a gamepad to control the frequency of 2 MIDI oscillators. Built with ReactJS, ToneJS, and P5JS.
 
 ## Getting Started
 
-1. Clone this repo: `git clone https://github.com/whoisryosuke/r3f-next-starter.git`
+1. Clone this repo.
 1. Install dependencies: `yarn`
 1. Run the development server: `yarn dev`
 1. See the site here 👀: http://localhost:3000/
-
-> You can also [preview and fork on CodeSandbox](https://githubbox.com/whoisryosuke/ryoturia-web)
 
 ### Lint and Code Formatting
 
